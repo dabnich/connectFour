@@ -36,10 +36,11 @@ function dropDisc(el){
 	//alert("aa");
 	var loc = el.id.split(",");
 	var col = loc[0];
-	var drop = game.dropDisc(col, 1);
+	var drop = game.dropDisc(col, game.color);
 	if(drop!=false){
 		var td = document.getElementById(drop[0]+","+drop[1]);
-		td.innerHTML = 1;
+		td.innerHTML = game.color;
+		game.switchColor();
 	}
 	if(game.isFinish()) alert("koniec");
 }
@@ -58,6 +59,11 @@ function game(){
 		}
 	}
 	
+	this.switchColor = function(){
+		if(this.color==1) this.color = 2;
+		else this.color = 1;
+	}
+	
 	this.dropDisc = function(col, color){
 		for(var r=0; r<this.rows; r++){
 			if(this.fields[col][r]==0){
@@ -69,27 +75,40 @@ function game(){
 	}
 	
 	this.isFinish = function(){
-		var count = 0;
+		var count1 = 0;
+		var count2 = 0;
 		for(var r=0; r<this.rows; r++){
 			for(var c=0; c<this.cols; c++){
-				if(this.fields[c][r]!=0){
-					count = count+1;
-					if(count>=this.max) return this.fields[c][r];
+				if(this.fields[c][r]==1){
+					count1 = count1+1;
+					if(count1>=this.max) return this.fields[c][r];
 				}
-				else count=0;
+				else count1=0;
+				if(this.fields[c][r]==2){
+					count2 = count2+1;
+					if(count2>=this.max) return this.fields[c][r];
+				}
+				else count2=0;
 			}
+			count1 = 0;
+			count2 = 0;
 		}
-		count = 0;
 		for(var c=0; c<this.cols; c++){
 			for(var r=0; r<this.rows; r++){
-				if(this.fields[c][r]!=0){
-					count = count+1;
-					if(count>=this.max) return this.fields[c][r];
+				if(this.fields[c][r]==1){
+					count1 = count1+1;
+					if(count1>=this.max) return this.fields[c][r];
 				}
-				else count=0;
+				else count1=0;
+				if(this.fields[c][r]==2){
+					count2 = count2+1;
+					if(count2>=this.max) return this.fields[c][r];
+				}
+				else count2=0;
 			}
+			count1 = 0;
+			count2 = 0;			
 		}
-		count = 0;
 		var maxIncrRow = (this.rows-this.max);
 		var minDecrRow = this.max-1;
 		for(var r=0; r<this.rows; r++){
@@ -97,53 +116,78 @@ function game(){
 			var rTemp = r;
 			if(r<=maxIncrRow){
 				while(cTemp<this.cols && rTemp<this.rows){
-					if(this.fields[cTemp][rTemp]!=0){
-						count = count+1;
-						if(count>=this.max) return this.fields[c][r];
+					if(this.fields[cTemp][rTemp]==1){
+						count1 = count1+1;
+						if(count1>=this.max) return this.fields[cTemp][rTemp];
 					}
-					else count=0;
+					else count1=0;
+					if(this.fields[cTemp][rTemp]==2){
+						count2 = count2+1;
+						if(count2>=this.max) return this.fields[cTemp][rTemp];
+					}
+					else count2=0;
 					cTemp = cTemp+1;
 					rTemp = rTemp+1;
 				}
-				count = 0;
+				count1 = 0;
+				count2 = 0;
 				cTemp = this.cols-1;
 				rTemp = r;
 				while(cTemp>0 && rTemp<this.rows){
-					if(this.fields[cTemp][rTemp]!=0){
-						count = count+1;
-						if(count>=this.max) return this.fields[c][r];
+					if(this.fields[cTemp][rTemp]==1){
+						count1 = count1+1;
+						if(count1>=this.max) return this.fields[cTemp][rTemp];
 					}
-					else count=0;
+					else count1=0;
+					if(this.fields[cTemp][rTemp]==2){
+						count2 = count2+1;
+						if(count2>=this.max) return this.fields[cTemp][rTemp];
+					}
+					else count2=0;
 					cTemp = cTemp-1;
 					rTemp = rTemp+1;
 				}
 
 			}
 			if(r>=minDecrRow){
-				count = 0;
+				count1 = 0;
+				count2 = 0;
 				cTemp = 0;
 				rTemp = r;	
 				while(cTemp<this.cols && rTemp>=0){
-					if(this.fields[cTemp][rTemp]!=0){
-						count = count+1;
-						if(count>=this.max) return this.fields[c][r];
+					if(this.fields[cTemp][rTemp]==1){
+						count1 = count1+1;
+						if(count1>=this.max) return this.fields[cTemp][rTemp];
 					}
-					else count=0;
+					else count1=0;
+					if(this.fields[cTemp][rTemp]==2){
+						count2 = count2+1;
+						if(count2>=this.max) return this.fields[cTemp][rTemp];
+					}
+					else count2=0;
 					cTemp = cTemp+1;
 					rTemp = rTemp-1;
 				}
-				count = 0;
+				count1 = 0;
+				count2 = 0;
 				cTemp = this.cols-1;
 				rTemp = r;
 				while(cTemp>=0 && rTemp>=0){
-					if(this.fields[cTemp][rTemp]!=0){
-						count = count+1;
-						if(count>=this.max) return this.fields[c][r];
+					if(this.fields[cTemp][rTemp]==1){
+						count1 = count1+1;
+						if(count1>=this.max) return this.fields[cTemp][rTemp];
 					}
-					else count=0;
+					else count1=0;
+					if(this.fields[cTemp][rTemp]==2){
+						count2 = count2+1;
+						if(count2>=this.max) return this.fields[cTemp][rTemp];
+					}
+					else count2=0;
 					cTemp = cTemp-1;
 					rTemp = rTemp-1;
 				}
+				count1 = 0;
+				count2 = 0;
 			}
 		}
 		return false;
