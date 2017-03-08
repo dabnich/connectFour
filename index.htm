@@ -24,7 +24,9 @@ function createTable(){
 			//td.style.border = "solid 1px blue";
 			td.style.width = "50px";
 			td.style.height = "50px";
-			td.style.background = "white";
+			//td.style.background = "white";
+			td.style.backgroundImage = "url('td.jpg')";
+			td.style.backgroundPosition = "center";
 			tr.appendChild(td);
 		}
 		table.appendChild(tr);
@@ -39,7 +41,15 @@ function dropDisc(el){
 	var drop = game.dropDisc(col, game.color);
 	if(drop!=false){
 		var td = document.getElementById(drop[0]+","+drop[1]);
-		td.innerHTML = game.color;
+		if(game.color==1){
+			td.style.backgroundImage = "url('green.jpg')";
+			td.style.backgroundPosition = "center";
+		}
+		if(game.color==2){
+			td.style.backgroundImage = "url('red.jpg')";
+			td.style.backgroundPosition = "center";
+		}
+		//td.innerHTML = game.color;
 		game.switchColor();
 	}
 	if(game.isFinish()) alert("koniec");
