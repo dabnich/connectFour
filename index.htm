@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+</HEAD>
+<BODY>
+
+<script>
+
+var game = new game();
+alert(game.fields[2][2]);
+
+function game(){
+	this.cols = 7;
+	this.rows = 6;
+	this.fields = new Array();
+	this.move = 1;
+	this.max = 4;
+	
+	for(var c=0; c<this.cols; c++){
+		this.fields[c] = new Array();
+		for(var r=0; r<this.rows; r++){
+			this.fields[c][r]=0;
+		}
+	}
+	
+	this.isFinish = function(){
+		var count = 0;
+		for(var r=0; r<this.rows; r++){
+			for(var c=0; c<this.cols; c++){
+				if(this.fields[c][r]!=0){
+					count = count+1;
+					if(count>=this.max) return this.fields[c][r];
+				}
+				else count=0;
+			}
+		}
+		count = 0;
+		for(var c=0; c<this.cols; c++){
+			for(var r=0; r<this.rows; r++){
+				if(this.fields[c][r]!=0){
+					count = count+1;
+					if(count>=this.max) return this.fields[c][r];
+				}
+				else count=0;
+			}
+		}
+		count = 0;
+		var maxIncrRow = (this.rows-this.max);
+		var minDecrRow = this.max-1;
+		for(var r=0; r<this.rows; r++){
+			var cTemp = 0;
+			var rTemp = r;
+			if(r<=maxIncrRow){
+				while(cTemp<this.cols && rTemp<this.rows){
+					if(this.fields[cTemp][rTemp]!=0){
+						count = count+1;
+						if(count>=this.max) return this.fields[c][r];
+					}
+					else count=0;
+					cTemp = cTemp+1;
+					rTemp = rTemp+1;
+				}
+				count = 0;
+				while(cTemp>=0 && rTemp>=0){
+					if(this.fields[cTemp][rTemp]!=0){
+						count = count+1;
+						if(count>=this.max) return this.fields[c][r];
+					}
+					else count=0;
+					cTemp = cTemp-1;
+					rTemp = rTemp-1;
+				}
+			}
+			count = 0;
+			cTemp = 0;
+			rTemp = r;			
+			if(r>=minDecrRow){
+				while(cTemp<this.cols && rTemp>=0){
+					if(this.fields[cTemp][rTemp]!=0){
+						count = count+1;
+						if(count>=this.max) return this.fields[c][r];
+					}
+					else count=0;
+					cTemp = cTemp+1;
+					rTemp = rTemp-1;
+				}				
+			}
+			
+		}
+		
+			
+			
+
+	}
+	
+}
+
+</script>
+
+</BODY>
+</HTML>
