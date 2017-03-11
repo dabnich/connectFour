@@ -3,7 +3,8 @@
 </HEAD>
 <BODY>
 <button onclick="createTable()">createTable</button>
-
+<button id="choices" onclick="getChoices()">getChoices</button>
+<div id="test"></div>
 <script>
 
 
@@ -60,6 +61,7 @@ function dropDisc(el){
 	var win = 0;
 	if(win = game.isFinish()) alert("win: "+win);
 }
+
 
 function game(){
 	this.cols = cols;
@@ -207,6 +209,35 @@ function game(){
 			}
 		}
 		return false;
+	}
+	
+	
+	this.getChoices = function(){
+		var choices = new Array();
+		var n=0;
+		for(var c=0; c<this.cols; c++){
+			for(var r=0; r<this.rows; r++){
+				if(this.fields[c][r]==0){
+					choices[n] = new Array(c, r);
+					n = n+1;
+					break;
+				}
+			}
+		}
+		return choices;
+	}
+	
+	
+	this.getAnalize = function(col, row, myColor){
+		var risk = 0;
+		var tRisk = 0;
+		var oppColor = 2;
+		if(myColor==2) oppColor = 1;
+		if(col<this.cols-1){
+			for(var c=col+1; c<this.cols; c++){
+				if(this.fields[c][row]==oppColor) tRisk = tRisk+1;
+			}
+		}
 	}
 	
 }
