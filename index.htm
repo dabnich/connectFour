@@ -25,7 +25,27 @@ function test(ev, el){
 			alert("profit: "+analize[0]+"    risk: "+analize[1]);
 		}
 	}
-	else dropDisc(el);
+	else{ 
+		dropDisc(el);
+		testChoices();
+	}
+}
+
+function testChoices(){
+	var tds = document.getElementsByTagName("td");
+	for(var i=0; i<tds.length; i++){
+		tds[i].innerHTML = "";
+	}
+	var choices = game.getChoices();
+	var u=0;
+	//alert(choices[0][0]+","+choices[0][1]);
+	for(var i=0; i<choices.length; i++){
+		var analize = game.getAnalize(choices[i][0], choices[i][1], game.color);
+		//if(analize) alert(analize[0]);
+		var td = document.getElementById(choices[i][0]+","+choices[i][1]);
+		td.textContent = analize[0]+" , "+analize[1];
+	}
+	
 }
 
 function createTable(){
@@ -286,7 +306,7 @@ function game(){
 				else break;
 			}
 		}
-		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2;
 		if(tRisk1<tRisk2) tRisk1 = tRisk2;
 		if(tRisk1>risk) risk = tRisk1;
 		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
@@ -313,12 +333,12 @@ function game(){
 				if(this.fields[col][r]==oppColor) tRisk2 = tRisk2+1;
 				else break;
 			}
-			for(var r=row-1; row>=0; row--){
+			for(var r=row-1; r>=0; r--){
 				if(this.fields[col][r]==myColor) tProfit2 = tProfit2+1;
 				else break;
 			}
 		}
-		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2;
 		if(tRisk1<tRisk2) tRisk1 = tRisk2;
 		if(tRisk1>risk) risk = tRisk1;
 		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
@@ -366,7 +386,7 @@ function game(){
 			c = c-1;
 			r = r-1;
 		}
-		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2;
 		if(tRisk1<tRisk2) tRisk1 = tRisk2;
 		if(tRisk1>risk) risk = tRisk1;
 		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
@@ -411,7 +431,7 @@ function game(){
 			c = c-1;
 			r = r+1;
 		}
-		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2;
 		if(tRisk1<tRisk2) tRisk1 = tRisk2;
 		if(tRisk1>risk) risk = tRisk1;
 		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
