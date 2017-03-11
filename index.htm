@@ -13,6 +13,21 @@ var rows = 6;
 var game = new game();
 
 
+function test(ev, el){
+	if(ev.button==1){
+		var loc = el.id.split(",");
+		var col = loc[0];
+		var drop = game.getDropLocation(col);
+		if(drop!=false){
+			var analize = game.getAnalize(parseInt(col), drop[1], game.color);
+			//document.getElementById("test").textContent = "profit: "+analize[0]+"    risk: "+analize[1];
+			//alert(analize.length);
+			alert("profit: "+analize[0]+"    risk: "+analize[1]);
+		}
+	}
+	else dropDisc(el);
+}
+
 function createTable(){
 	var table = document.createElement("table");
 	table.style.background = "rgb(70,0,185)";
@@ -28,7 +43,8 @@ function createTable(){
 		for(var c=0; c<cols; c++){
 			var td = document.createElement("td");
 			td.id = c+","+(rows-r-1);
-			td.onclick = function() { dropDisc(this); }; //IMPORTANT
+			//td.onclick = function() { test(event); dropDisc(this); }; //IMPORTANT
+			td.onmousedown = function() { test(event, this);}; //IMPORTANT
 			td.style.width = "50px";
 			td.style.height = "50px";
 			td.style.backgroundImage = "url('td.jpg')";
@@ -90,6 +106,15 @@ function game(){
 			}
 		}
 		return false;
+	}
+	
+	this.getDropLocation = function(col){
+		for(var r=0; r<this.rows; r++){
+			if(this.fields[col][r]==0){
+				return new Array(col, r);
+			}
+		}
+		return false;		
 	}
 	
 	this.isFinish = function(){
@@ -230,14 +255,174 @@ function game(){
 	
 	this.getAnalize = function(col, row, myColor){
 		var risk = 0;
-		var tRisk = 0;
+		var tRisk1 = 0;
+		var tRisk2 = 0;
+		var profit = 0;
+		var tProfit1 = 0;
+		var tProfit2 = 0;
 		var oppColor = 2;
 		if(myColor==2) oppColor = 1;
+		var u=0;
+		//in Rows
 		if(col<this.cols-1){
 			for(var c=col+1; c<this.cols; c++){
-				if(this.fields[c][row]==oppColor) tRisk = tRisk+1;
+				if(this.fields[c][row]==oppColor) tRisk1 = tRisk1+1;
+				else { break; };
+				u = u+1;
+			}
+			for(var c=col+1; c<this.cols; c++){
+				if(this.fields[c][row]==myColor) tProfit1 = tProfit1+1;
+				else { break; };
 			}
 		}
+		
+		if(col>0){
+			for(var c=col-1; c>=0; c--){
+				if(this.fields[c][row]==oppColor) tRisk2 = tRisk2+1;
+				else break;
+			}
+			for(var c=col-1; c>=0; c--){
+				if(this.fields[c][row]==myColor) tProfit2 = tProfit2+1;
+				else break;
+			}
+		}
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1<tRisk2) tRisk1 = tRisk2;
+		if(tRisk1>risk) risk = tRisk1;
+		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
+		if(tProfit1<tProfit2) tProfit1 = tProfit2;
+		if(tProfit1>profit) profit = tProfit1;
+		tRisk1 = 0;
+		tRisk2 = 0;
+		tProfit1 = 0;
+		tProfit2 = 0;
+		
+		//in Column
+		if(row<this.rows-1){
+			for(var r=row+1; r<this.rows; r++){
+				if(this.fields[col][r]==oppColor) tRisk1 = tRisk1+1;
+				else break;
+			}
+			for(var r=row+1; r<this.rows; r++){
+				if(this.fields[col][r]==myColor) tProfit1 = tProfit1+1;
+				else break;
+			}			
+		}
+		if(row>0){
+			for(var r=row-1; r>=0; r--){
+				if(this.fields[col][r]==oppColor) tRisk2 = tRisk2+1;
+				else break;
+			}
+			for(var r=row-1; row>=0; row--){
+				if(this.fields[col][r]==myColor) tProfit2 = tProfit2+1;
+				else break;
+			}
+		}
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1<tRisk2) tRisk1 = tRisk2;
+		if(tRisk1>risk) risk = tRisk1;
+		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
+		if(tProfit1<tProfit2) tProfit1 = tProfit2;
+		if(tProfit1>profit) profit = tProfit1;
+		tRisk1 = 0;
+		tRisk2 = 0;
+		tProfit1 = 0;
+		tProfit2 = 0;
+		//alert("b");
+		//in Diagonals
+		//RIGHT and UP
+		
+		var c=col+1;
+		var r=row+1;
+		while(c<this.cols && r<this.rows){
+			if(this.fields[c][r]==oppColor) tRisk1 = tRisk1+1;
+			else break;
+			c = c+1;
+			r = r+1;
+		}
+		c = col+1;
+		r = row+1;		
+		while(c<this.cols && r<this.rows){
+			if(this.fields[c][r]==myColor) tProfit1 = tProfit1+1;
+			else break;
+			c = c+1;
+			r = r+1;
+		}
+		
+		//LEFT and DOWN
+		c=col+1;
+		r=row+1;
+		while(c>=0 && r>=0){
+			if(this.fields[c][r]==oppColor) tRisk2 = tRisk2+1;
+			else break;
+			c = c+1;
+			r = r+1;
+		}
+		c = col-1;
+		r = row-1;		
+		while(c>=0 && r>=0){
+			if(this.fields[c][r]==myColor) tProfit2 = tProfit2+1;
+			else break;
+			c = c-1;
+			r = r-1;
+		}
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1<tRisk2) tRisk1 = tRisk2;
+		if(tRisk1>risk) risk = tRisk1;
+		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
+		if(tProfit1<tProfit2) tProfit1 = tProfit2;
+		if(tProfit1>profit) profit = tProfit1;
+		tRisk1 = 0;
+		tRisk2 = 0;
+		tProfit1 = 0;
+		tProfit2 = 0;		
+		
+		//RIGHT and DOWN
+		c = col+1;
+		r = row-1;
+		while(c<this.cols && r>=0){
+			if(this.fields[c][r]==oppColor) tRisk1 = tRisk1+1;
+			else break;
+			c = c+1;
+			r = r-1;
+		}
+		c = col+1;
+		r = row-1;
+		while(c<this.cols && r>=0){
+			if(this.fields[c][r]==myColor) tProfit1 = tProfit1+1;
+			else break;
+			c = c+1;
+			r = r-1;
+		}
+		//LEFT and UP
+		c = col-1;
+		r = row+1;
+		while(c<this.cols && r>=0){
+			if(this.fields[c][r]==oppColor) tRisk2 = tRisk2+1;
+			else break;
+			c = c-1;
+			r = r+1;
+		}
+		c = col-1;
+		r = row+1;
+		while(c<this.cols && r>=0){
+			if(this.fields[c][r]==myColor) tProfit2 = tProfit2+1;
+			else break;
+			c = c-1;
+			r = r+1;
+		}
+		if(tRisk1>0 && tRisk2>0) tRisk1 = tRisk1+tRisk2
+		if(tRisk1<tRisk2) tRisk1 = tRisk2;
+		if(tRisk1>risk) risk = tRisk1;
+		if(tProfit1>0 && tProfit2>0) tProfit1 = tProfit1+tProfit2;
+		if(tProfit1<tProfit2) tProfit1 = tProfit2;
+		if(tProfit1>profit) profit = tProfit1;
+		tRisk1 = 0;
+		tRisk2 = 0;
+		tProfit1 = 0;
+		tProfit2 = 0;	
+		
+		return new Array(profit, risk);
 	}
 	
 }
