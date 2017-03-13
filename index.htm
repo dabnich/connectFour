@@ -3,8 +3,8 @@
 </HEAD>
 <BODY>
 <button onclick="createTable()">createTable</button>
-<button id="choices" onclick="getChoices()">getChoices</button>
-<div id="test"></div>
+<button id="choices" onclick="testChoices()">testChoices</button>
+<div id="color" style="width: 100px"></div>
 <script>
 
 
@@ -20,9 +20,9 @@ function test(ev, el){
 		var drop = game.getDropLocation(col);
 		if(drop!=false){
 			var analize = game.getAnalize(parseInt(col), drop[1], game.color);
-			//document.getElementById("test").textContent = "profit: "+analize[0]+"    risk: "+analize[1];
-			//alert(analize.length);
-			alert("profit: "+analize[0]+"    risk: "+analize[1]);
+			////document.getElementById("test").textContent = "profit: "+analize[0]+"    risk: "+analize[1];
+			////alert(analize.length);
+			//alert("profit: "+analize[0]+"    risk: "+analize[1]);
 		}
 	}
 	else{ 
@@ -31,7 +31,38 @@ function test(ev, el){
 	}
 }
 
-function testChoices(){
+function testAnalize(col, row, color){
+	var analize = game.getAnalize(col, row, color);
+	if(analize){
+		//alert("profit: "+analize[0]+"    risk: "+analize[1]);
+		return true;
+	}
+	return false;
+}
+
+function testAnalizes(){ //write all analizes on td-choices
+	var tds = document.getElementsByTagName("td");
+	for(var i=0; i<tds.length; i++){
+		tds[i].innerHTML = "";
+	}
+	var choices = game.getChoices();
+	var a=0;
+	var i=0;
+	for(i=0; i<choices.length; i++){
+		try{
+			if(testAnalize(choices[i][0], choices[i][1], game.color)==true){
+				a = a+1;
+				
+			}
+		}
+		catch(err){
+			alert(choices[i][0]+" nie dziala")
+		};
+	}
+	//alert("Jest: "+a+"   ,   powinno byc: "+i);
+}
+
+function testChoices(){ //write all analizes on td-choices
 	var tds = document.getElementsByTagName("td");
 	for(var i=0; i<tds.length; i++){
 		tds[i].innerHTML = "";
@@ -43,9 +74,9 @@ function testChoices(){
 		var analize = game.getAnalize(choices[i][0], choices[i][1], game.color);
 		//if(analize) alert(analize[0]);
 		var td = document.getElementById(choices[i][0]+","+choices[i][1]);
+		td.style.textAlign = "center";
 		td.textContent = analize[0]+" , "+analize[1];
 	}
-	
 }
 
 function createTable(){
@@ -63,8 +94,8 @@ function createTable(){
 		for(var c=0; c<cols; c++){
 			var td = document.createElement("td");
 			td.id = c+","+(rows-r-1);
-			//td.onclick = function() { test(event); dropDisc(this); }; //IMPORTANT
-			td.onmousedown = function() { test(event, this);}; //IMPORTANT
+			td.onclick = function() { dropDisc(this); }; //IMPORTANT
+			//td.onmousedown = function() { test(event, this);}; //IMPORTANT
 			td.style.width = "50px";
 			td.style.height = "50px";
 			td.style.backgroundImage = "url('td.jpg')";
@@ -93,6 +124,12 @@ function dropDisc(el){
 		}
 		//td.innerHTML = game.color;
 		game.switchColor();
+		document.getElementById("color").textContent = "color: "+game.color;
+		if(game.color==1)
+			document.getElementById("color").style.background = "rgb(61,235,60)";
+		else 
+			document.getElementById("color").style.background = "rgb(255,102,52)";
+			
 	}
 	var win = 0;
 	if(win = game.isFinish()) alert("win: "+win);
@@ -370,13 +407,13 @@ function game(){
 		}
 		
 		//LEFT and DOWN
-		c=col+1;
-		r=row+1;
+		c=col-1;
+		r=row-1;
 		while(c>=0 && r>=0){
 			if(this.fields[c][r]==oppColor) tRisk2 = tRisk2+1;
 			else break;
-			c = c+1;
-			r = r+1;
+			c = c-1;
+			r = r-1;
 		}
 		c = col-1;
 		r = row-1;		
@@ -417,7 +454,7 @@ function game(){
 		//LEFT and UP
 		c = col-1;
 		r = row+1;
-		while(c<this.cols && r>=0){
+		while(c>=0 && r<this.rows){
 			if(this.fields[c][r]==oppColor) tRisk2 = tRisk2+1;
 			else break;
 			c = c-1;
@@ -425,7 +462,7 @@ function game(){
 		}
 		c = col-1;
 		r = row+1;
-		while(c<this.cols && r>=0){
+		while(c>=0 && r<this.rows){
 			if(this.fields[c][r]==myColor) tProfit2 = tProfit2+1;
 			else break;
 			c = c-1;
