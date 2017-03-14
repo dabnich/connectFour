@@ -3,8 +3,9 @@
 </HEAD>
 <BODY>
 <button onclick="createTable()">createTable</button>
-<button id="choices" onclick="testChoices()">testChoices</button>
+<button id="choices" onclick="testGetAnalizes()">testGetAnalizes</button>
 <div id="color" style="width: 100px"></div>
+<div id="test"></div>
 <script>
 
 
@@ -12,7 +13,18 @@ var cols = 7;
 var rows = 6;
 var game = new game();
 
+function testGetAnalizes(){
+	var analizes = game.getAnalizeChoices();
+	var el = document.getElementById("test");
+	var txt;
+	for(var i=0; i<analizes.length; i++){
+		if(i==0) txt = analizes[i][0]+","+analizes[i][1]+","+analizes[i][2]+","+analizes[i][3]+"  |  ";
+		else txt = txt+analizes[i][0]+","+analizes[i][1]+","+analizes[i][2]+","+analizes[i][3]+"  |  ";
+	}
+	el.innerHTML = txt;
+}
 
+/*
 function test(ev, el){
 	if(ev.button==1){
 		var loc = el.id.split(",");
@@ -68,8 +80,6 @@ function testChoices(){ //write all analizes on td-choices
 		tds[i].innerHTML = "";
 	}
 	var choices = game.getChoices();
-	var u=0;
-	//alert(choices[0][0]+","+choices[0][1]);
 	for(var i=0; i<choices.length; i++){
 		var analize = game.getAnalize(choices[i][0], choices[i][1], game.color);
 		//if(analize) alert(analize[0]);
@@ -78,6 +88,7 @@ function testChoices(){ //write all analizes on td-choices
 		td.textContent = analize[0]+" , "+analize[1];
 	}
 }
+*/
 
 function createTable(){
 	var table = document.createElement("table");
@@ -294,6 +305,25 @@ function game(){
 	}
 	
 	
+	this.getAnalizeChoices = function(){
+		var color = this.color;
+		var choices = new Array();
+		choices = this.getChoices();
+		var analizes = new Array();
+		for(var i=0; i<choices.length; i++){
+			var tmpAnalizes = new Array();
+			tmpAnalizes = this.getAnalize(choices[i][0], choices[i][1], color);
+			analizes[i] = new Array();
+			analizes[i][0] = choices[i][0];
+			analizes[i][1] = choices[i][1];
+			analizes[i][2] = tmpAnalizes[0];
+			analizes[i][3] = tmpAnalizes[1];
+			//analizes[i] = new Array(choices[0], choices[1], tmpAnalizes[0], tmpAnalizes[1]);
+		}
+		//alert(analizes[6][3]);
+		return analizes;
+	}
+	
 	this.getChoices = function(){
 		var choices = new Array();
 		var n=0;
@@ -308,7 +338,6 @@ function game(){
 		}
 		return choices;
 	}
-	
 	
 	this.getAnalize = function(col, row, myColor){
 		var risk = 0;
@@ -478,9 +507,10 @@ function game(){
 		tRisk2 = 0;
 		tProfit1 = 0;
 		tProfit2 = 0;	
-		
 		return new Array(profit, risk);
 	}
+	
+	
 	
 }
 
