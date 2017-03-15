@@ -3,7 +3,7 @@
 </HEAD>
 <BODY>
 <button onclick="createTable()">createTable</button>
-<button id="choices" onclick="testGetAnalizes()">testGetAnalizes</button>
+<button id="choices" onclick="testGetMove()">testGetAnalizes</button>
 <div id="color" style="width: 100px"></div>
 <div id="test"></div>
 <script>
@@ -13,8 +13,13 @@ var cols = 7;
 var rows = 6;
 var game = new game();
 
-function testGetAnalizes(){
-	var analizes = game.getAnalizeChoices();
+function testGetMove(){
+	//var analizes = game.getAnalizeChoices(game.color);
+	var move = game.calculateMove(game.color);
+	if(move!=-1){
+		alert(move);
+	}
+	/*
 	var el = document.getElementById("test");
 	var txt;
 	for(var i=0; i<analizes.length; i++){
@@ -22,73 +27,9 @@ function testGetAnalizes(){
 		else txt = txt+analizes[i][0]+","+analizes[i][1]+","+analizes[i][2]+","+analizes[i][3]+"  |  ";
 	}
 	el.innerHTML = txt;
+	*/
 }
 
-/*
-function test(ev, el){
-	if(ev.button==1){
-		var loc = el.id.split(",");
-		var col = loc[0];
-		var drop = game.getDropLocation(col);
-		if(drop!=false){
-			var analize = game.getAnalize(parseInt(col), drop[1], game.color);
-			////document.getElementById("test").textContent = "profit: "+analize[0]+"    risk: "+analize[1];
-			////alert(analize.length);
-			//alert("profit: "+analize[0]+"    risk: "+analize[1]);
-		}
-	}
-	else{ 
-		dropDisc(el);
-		testChoices();
-	}
-}
-
-function testAnalize(col, row, color){
-	var analize = game.getAnalize(col, row, color);
-	if(analize){
-		//alert("profit: "+analize[0]+"    risk: "+analize[1]);
-		return true;
-	}
-	return false;
-}
-
-function testAnalizes(){ //write all analizes on td-choices
-	var tds = document.getElementsByTagName("td");
-	for(var i=0; i<tds.length; i++){
-		tds[i].innerHTML = "";
-	}
-	var choices = game.getChoices();
-	var a=0;
-	var i=0;
-	for(i=0; i<choices.length; i++){
-		try{
-			if(testAnalize(choices[i][0], choices[i][1], game.color)==true){
-				a = a+1;
-				
-			}
-		}
-		catch(err){
-			alert(choices[i][0]+" nie dziala")
-		};
-	}
-	//alert("Jest: "+a+"   ,   powinno byc: "+i);
-}
-
-function testChoices(){ //write all analizes on td-choices
-	var tds = document.getElementsByTagName("td");
-	for(var i=0; i<tds.length; i++){
-		tds[i].innerHTML = "";
-	}
-	var choices = game.getChoices();
-	for(var i=0; i<choices.length; i++){
-		var analize = game.getAnalize(choices[i][0], choices[i][1], game.color);
-		//if(analize) alert(analize[0]);
-		var td = document.getElementById(choices[i][0]+","+choices[i][1]);
-		td.style.textAlign = "center";
-		td.textContent = analize[0]+" , "+analize[1];
-	}
-}
-*/
 
 function createTable(){
 	var table = document.createElement("table");
@@ -304,9 +245,17 @@ function game(){
 		return false;
 	}
 	
+	this.calculateMove = function(color){
+		var analizes = this.getAnalizeChoices(color);
+		var analizesProfit = sortProfit(analizes);
+		if(analizesProfit[0][2]>=3) return analizesProfit[0][0];
+		var analizesRisk = sortRisk(analizes);
+		if(analizesRisk[0][3]>=3) return analizesRisk[0][0];
+		return -1;
+	}
 	
-	this.getAnalizeChoices = function(){
-		var color = this.color;
+	this.getAnalizeChoices = function(color){
+		//var color = this.color;
 		var choices = new Array();
 		choices = this.getChoices();
 		var analizes = new Array();
@@ -320,7 +269,6 @@ function game(){
 			analizes[i][3] = tmpAnalizes[1];
 			//analizes[i] = new Array(choices[0], choices[1], tmpAnalizes[0], tmpAnalizes[1]);
 		}
-		//alert(analizes[6][3]);
 		return analizes;
 	}
 	
@@ -510,9 +458,34 @@ function game(){
 		return new Array(profit, risk);
 	}
 	
-	
-	
+	function sortProfit (analizes){
+		for(var n=0; n<analizes.length; n++){
+			for(var i=0; i<analizes.length-1; i++){
+				var tmp = analizes[i];
+				if(analizes[i][2]<analizes[i+1][2]){
+					analizes[i] = analizes[i+1]
+					analizes[i+1] = tmp;
+				} 
+			}
+		}
+		return analizes;
+	}
+
+	function sortRisk (analizes){
+		for(var n=0; n<analizes.length; n++){
+			for(var i=0; i<analizes.length-1; i++){
+				var tmp = analizes[i];
+				if(analizes[i][3]<analizes[i+1][3]){
+					analizes[i] = analizes[i+1]
+					analizes[i+1] = tmp;
+				} 
+			}
+		}
+		return analizes;
+	}	
 }
+
+
 
 </script>
 
